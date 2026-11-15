@@ -65,6 +65,21 @@ jobs:
           bunx cap add android
           bunx cap sync android
 
+      - name: Generate Android launcher icons
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick
+          mkdir -p android/app/src/main/res/mipmap-{mdpi,hdpi,xhdpi,xxhdpi,xxxhdpi}
+          for spec in mdpi:48 hdpi:72 xhdpi:96 xxhdpi:144 xxxhdpi:192; do
+            density=${spec%%:*}
+            size=${spec##*:}
+            convert -background none public/zx-stream-icon.svg -resize ${size}x${size} android/app/src/main/res/mipmap-${density}/ic_launcher.png
+            cp android/app/src/main/res/mipmap-${density}/ic_launcher.png android/app/src/main/res/mipmap-${density}/ic_launcher_round.png
+          done
+          cat > android/app/src/main/res/values/zx_stream_colors.xml <<'EOF'
+          <resources><color name="zx_splash_background">#090612</color></resources>
+          EOF
+
       - name: Build debug APK
         run: |
           cd android
