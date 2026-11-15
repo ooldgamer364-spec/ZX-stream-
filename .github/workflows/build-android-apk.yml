@@ -56,7 +56,7 @@ jobs:
 
       - name: Add Capacitor Android wrapper
         env:
-          APP_URL: ${{ inputs.app_url }}
+          APP_URL: ${{ github.event.inputs.app_url || 'https://zx-stream.onrender.com' }}
         run: |
           bun add @capacitor/core@^7 @capacitor/cli@^7 @capacitor/android@^7
           cat > capacitor.config.json <<EOF
@@ -69,6 +69,10 @@ jobs:
           EOF
           bunx cap add android
           bunx cap sync android
+          # Keep the app installable on older Android phones such as Android 8.1.
+          test -f android/variables.gradle
+          sed -i -E 's/minSdkVersion = .*/minSdkVersion = 23/; s/targetSdkVersion = .*/targetSdkVersion = 28/' android/variables.gradle
+          grep -E 'minSdkVersion|targetSdkVersion' android/variables.gradle
 
       - name: Generate Android launcher icons
         run: |
@@ -89,12 +93,16 @@ jobs:
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew --no-daemon clean assembleDebug
+          APK="app/build/outputs/apk/debug/app-debug.apk"
+          test -s "$APK"
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose "$APK"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -E "^(package:|sdkVersion:|targetSdkVersion:)"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: ZX-Stream-debug-APK
+          name: ZX-Stream-Android8-Compatible-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
