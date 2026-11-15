@@ -44,7 +44,7 @@ jobs:
 
       - name: Validate deployment URL
         env:
-          APP_URL: ${{ inputs.app_url || 'https://zx-stream.onrender.com' }}
+          APP_URL: ${{ github.event.inputs.app_url || 'https://zx-stream.onrender.com' }}
         run: |
           node -e "const u=new URL(process.env.APP_URL); if(u.protocol!=='https:') process.exit(1);"
 
@@ -59,18 +59,13 @@ jobs:
           APP_URL: ${{ inputs.app_url }}
         run: |
           bun add @capacitor/core@^7 @capacitor/cli@^7 @capacitor/android@^7
-          cat > capacitor.config.ts <<'EOF'
-          import type { CapacitorConfig } from '@capacitor/cli';
-          const config: CapacitorConfig = {
-            appId: 'com.zxstream.app',
-            appName: 'ZX Stream',
-            webDir: 'dist',
-            server: {
-              url: process.env.APP_URL,
-              cleartext: false
-            }
-          };
-          export default config;
+          cat > capacitor.config.json <<EOF
+          {
+            "appId": "com.zxstream.app",
+            "appName": "ZX Stream",
+            "webDir": "dist",
+            "server": { "url": "${APP_URL}", "cleartext": false }
+          }
           EOF
           bunx cap add android
           bunx cap sync android
