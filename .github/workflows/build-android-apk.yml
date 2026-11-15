@@ -1,11 +1,14 @@
 name: Build ZX Stream Android APK
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       app_url:
-        description: "Deployed ZX Stream HTTPS URL (for example https://zx-stream.onrender.com)"
-        required: true
+        description: "Deployed ZX Stream HTTPS URL"
+        required: false
+        default: "https://zx-stream.onrender.com"
         type: string
 
 permissions:
@@ -34,7 +37,7 @@ jobs:
 
       - name: Validate deployment URL
         env:
-          APP_URL: ${{ inputs.app_url }}
+          APP_URL: ${{ inputs.app_url || 'https://zx-stream.onrender.com' }}
         run: |
           node -e "const u=new URL(process.env.APP_URL); if(u.protocol!=='https:') process.exit(1);"
 
