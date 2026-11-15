@@ -9,7 +9,10 @@ function LaunchSplash() {
 
   useEffect(() => {
     const started = Date.now();
+    let finished = false;
     const finish = () => {
+      if (finished) return;
+      finished = true;
       const wait = Math.max(0, 1250 - (Date.now() - started));
       window.setTimeout(() => {
         setLeaving(true);
