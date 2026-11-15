@@ -1,0 +1,6 @@
+{
+  "name": "Zangetsu Stream Hub",
+  "description": "Real-time anime, movie, and series streaming platform powered by a live Zangetsu JS extension runtime, HDHub4u & HiAnime resolvers, multi-audio track switching, and offline downloads.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
