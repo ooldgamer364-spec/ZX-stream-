@@ -1,0 +1,80 @@
+name: Build ZX Stream Android APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      app_url:
+        description: "Deployed ZX Stream HTTPS URL (for example https://zx-stream.onrender.com)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.2.5"
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Validate deployment URL
+        env:
+          APP_URL: ${{ inputs.app_url }}
+        run: |
+          node -e "const u=new URL(process.env.APP_URL); if(u.protocol!=='https:') process.exit(1);"
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build web app
+        run: bun run build
+
+      - name: Add Capacitor Android wrapper
+        env:
+          APP_URL: ${{ inputs.app_url }}
+        run: |
+          bun add @capacitor/core@^7 @capacitor/cli@^7 @capacitor/android@^7
+          cat > capacitor.config.ts <<'EOF'
+          import type { CapacitorConfig } from '@capacitor/cli';
+          const config: CapacitorConfig = {
+            appId: 'com.zxstream.app',
+            appName: 'ZX Stream',
+            webDir: 'dist',
+            server: {
+              url: process.env.APP_URL,
+              cleartext: false
+            }
+          };
+          export default config;
+          EOF
+          bunx cap add android
+          bunx cap sync android
+
+      - name: Build debug APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ZX-Stream-debug-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14

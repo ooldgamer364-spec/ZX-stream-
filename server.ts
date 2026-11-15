@@ -5,7 +5,7 @@ import { Readable } from 'node:stream';
 import path from 'node:path';
 import { zangetsuRuntime } from './src/runtime/zangetsuRuntime.ts';
 
-const PORT = 3000;
+const PORT = Number(process.env.PORT || 3000);
 const DEFAULT_UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
 
