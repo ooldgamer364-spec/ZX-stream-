@@ -42,3 +42,24 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #334155;
 }
+
+
+/* ZX Stream launch animation */
+.zx-launch-splash{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 42%,#21094a 0%,#0b0618 48%,#030207 100%);transition:opacity .5s ease,visibility .5s ease}
+.zx-launch-splash--leaving{opacity:0;visibility:hidden;pointer-events:none}
+.zx-splash-logo{width:clamp(142px,42vw,210px);height:auto;border-radius:28%;filter:drop-shadow(0 0 22px #9b27ff);animation:zxLogoEnter .85s cubic-bezier(.2,.8,.2,1) both,zxLogoFloat 2.8s ease-in-out .85s infinite}
+.zx-splash-wordmark{margin-top:22px;font-family:var(--font-display);font-size:clamp(27px,8vw,38px);font-weight:800;letter-spacing:.16em;color:#fff;text-shadow:0 0 20px #a42aff;animation:zxTextEnter .7s .2s both}
+.zx-splash-wordmark span{color:#c58aff}
+.zx-splash-tagline{display:flex;align-items:center;gap:9px;margin-top:12px;color:#c8b7df;font-size:9px;letter-spacing:.2em;animation:zxTextEnter .7s .35s both}
+.zx-splash-tagline i{width:4px;height:4px;border-radius:50%;background:#d14dff;box-shadow:0 0 8px #d14dff}
+.zx-splash-loader{width:116px;height:3px;margin-top:48px;border-radius:9px;background:#39204f;overflow:hidden;animation:zxTextEnter .5s .45s both}
+.zx-splash-loader span{display:block;width:40%;height:100%;border-radius:9px;background:linear-gradient(90deg,#8b2bff,#f06aff);box-shadow:0 0 12px #c43dff;animation:zxLoading 1.2s ease-in-out infinite}
+.zx-splash-orbit{position:absolute;width:290px;height:290px;border:1px solid #8b35cf;border-radius:50%;opacity:.15;pointer-events:none}
+.zx-splash-orbit--one{animation:zxOrbit 12s linear infinite}
+.zx-splash-orbit--two{width:370px;height:370px;border-color:#5b2b9b;animation:zxOrbit 18s linear infinite reverse}
+@keyframes zxLogoEnter{from{opacity:0;transform:scale(.55) rotate(-12deg)}to{opacity:1;transform:scale(1) rotate(0)}}
+@keyframes zxLogoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes zxTextEnter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes zxLoading{0%{transform:translateX(-110%)}100%{transform:translateX(290%)}}
+@keyframes zxOrbit{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.zx-launch-splash *{animation:none!important}}
