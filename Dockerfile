@@ -1,10 +1,8 @@
-FROM oven/bun:1.2.5
+FROM oven/bun:1.2.5-alpine
 
 WORKDIR /app
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends ffmpeg ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache ffmpeg ca-certificates
 
 COPY package.json bun.lock ./
 RUN bun install
@@ -13,7 +11,7 @@ COPY . .
 RUN bun run build
 
 ENV NODE_ENV=production
-ENV PORT=3000
-EXPOSE 3000
+ENV PORT=10000
+EXPOSE 10000
 
 CMD ["bun", "run", "start"]
