@@ -1,8 +1,9 @@
 services:
   - type: web
-    name: zx-stream
+    name: zx-stream-staging
     runtime: docker
     plan: free
+    autoDeploy: true
     healthCheckPath: /
     envVars:
       - key: NODE_ENV
