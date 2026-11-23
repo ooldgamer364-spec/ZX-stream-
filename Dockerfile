@@ -14,4 +14,5 @@ ENV NODE_ENV=production
 ENV PORT=10000
 EXPOSE 10000
 
-CMD ["bun", "run", "start"]
+# Bun executes TypeScript natively; avoid relying on dev-only tsx at runtime.
+CMD ["bun", "run", "server.ts"]
